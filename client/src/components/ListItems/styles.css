@@ -1,0 +1,11 @@
+* {
+    border: 0px;
+}
+
+.listado {
+    list-style: none;
+}
+
+.item {
+    border: olivedrab 1x solid;
+}

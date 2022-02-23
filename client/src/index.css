@@ -1,0 +1,324 @@
+@font-face {
+    font-family: 'personalFont';
+    src: url('assets/Inconsolata-VariableFont_wdth,wght.ttf');
+/*    src: url('assets/Poppins-Regular.ttf');*/
+}
+
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 600;
+    src: local('Material Icons'),
+      local('MaterialIcons-Regular'),
+      url('assets/MaterialIcons-Regular.ttf') format('truetype');
+  }
+
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;  /* Preferred icon size */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+  
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+  
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+  
+    /* Support for IE. */
+    font-feature-settings: 'liga';
+  }
+
+* {
+    font-family: 'personalFont', sans-serif;
+    font-weight: lighter;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: rgb(244, 247, 235);
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+
+    max-width: 75%;
+    margin: 0 auto;
+}
+
+.container ul {
+    width: 100%;
+}
+
+.toolbox {
+    background-color: rgb(231, 230, 210);
+    border: rgb(151, 151, 151) 3px solid;
+    position: sticky;
+    top: 0rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    color: rgb(135, 170, 173);
+}
+
+.back {
+    cursor: pointer;
+}
+
+.toolbox > .info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+}
+
+.toolbox > .info > .infoSuperior {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.toolbox > .info > .infoSuperior > .path {
+    font-size: 0.9rem;
+    padding-top: 0.25rem;
+    float: left;
+}
+
+.toolbox > .info > .infoSuperior > .filter {
+    display: flex;
+    font-size: 1rem;
+    padding-top: 0.10rem;
+    float: right;
+    padding-right: 0.25rem;
+}
+
+.toolbox > .info > .infoSuperior > .filter > input {
+    background-color: rgb(244, 247, 235);
+    border: rgb(167, 216, 18) 1px solid;
+    color: rgb(135, 170, 173);
+}
+
+.toolbox > .info > .infoSuperior > .filter > .material-icons {
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.toolbox > .info > .infoInferior {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-bottom: 0.15rem;
+}
+
+.toolbox > .info > .infoInferior > .search {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-bottom: 0.15rem;
+}
+
+.toolbox > .info > .infoInferior > .search > .material-icons{
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.toolbox > .info > .infoInferior > .search > input {
+    background-color: rgb(244, 247, 235);
+    border: rgb(167, 216, 18) 1px solid;
+    color: rgb(135, 170, 173);
+}
+
+
+.toolbox > .info > .infoInferior > .info_listing {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+}
+
+.toolbox > .info > .infoInferior > .info_listing > li {
+    display: flex;
+    margin: 0 0.7rem 0 0;
+}
+
+.toolbox > .info > .infoInferior > .order {
+    display: flex;
+    padding-right: 0.25rem;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.toolbox > .info > .infoInferior > .order > li {
+    display: block;
+    font-size: 0.9rem;
+    margin: 0rem 0rem 0rem 0.5rem;
+    cursor: pointer;
+    border: 1px solid rgb(110, 110, 110);
+    background-color: rgb(207, 212, 208);
+    padding: 0 0.5rem;
+    border-radius: 2px;
+}
+
+.toolbox > .info > .infoInferior > .order > .active {
+    background-color: rgb(159, 179, 161);
+    color: cornsilk;
+}
+
+.arrow {
+    width: 0.9rem;
+    font-size: 0px;
+    float: right;
+    margin: 0 0 0 0.5rem;
+    padding-top: 1px;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: rgb(224, 230, 210);
+    color: rgb(135, 170, 173);
+    margin: 3px 0px 3px 0px;
+    border: rgb(167, 216, 18) 1px solid;
+    border-radius: 2px;
+    height: 2rem;
+    font-weight: 700;
+}
+
+.item:hover {
+    background-color: rgb(238, 247, 212);
+}
+
+.item .icon-type {
+    fill: cadetblue;
+    color: cadetblue;
+}
+
+.item > .directory {
+    font-weight: bold;
+}
+
+.item > .name {
+    justify-content: center;
+    flex-grow: 1;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-right: 0.5rem;
+    font-size: 1rem;
+}
+
+.item > .infofile {
+    margin-right: 0.5rem;
+    background-color: rgb(151, 151, 151);
+    color: white;
+    padding: 0 0.25rem;
+    border-radius: 1rem;
+}
+
+.waiting {
+    border: 0.5rem solid rgb(207, 212, 208);
+    border-top: 0.5rem solid cadetblue;
+    border-radius: 50%;
+    margin: 0 0.5rem;
+    animation: spin 2s linear infinite;
+    padding: 0px;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+.item > .dir {
+    font-size: 1rem;
+    margin-right: 0.5rem;
+    color: rgb(94, 160, 167);
+    text-align: right;
+    white-space: nowrap;
+}
+
+.item > .size {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: rgb(94, 160, 167);
+    text-align: right;
+    white-space: nowrap;
+}
+
+.item > .date {
+    font-size: 0.8rem;
+    color: rgb(94, 160, 167);
+    text-align: right;
+    white-space: nowrap;
+    margin-right: 0.5rem;
+}
+
+.item > .time {
+    font-size: 0.8rem;
+    color: rgb(94, 160, 167);
+    text-align: right;
+    white-space: nowrap;
+    margin-right: 0.5rem;
+}
+
+.item > .actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.item > .actions::empty {
+    display: none;
+}
+
+.item > .actions a {
+    color: rgb(135, 170, 173);
+}
+
+.item > .actions .material-icons:hover{
+    cursor: pointer;
+}
+
+@media screen and (max-width: 1200px) {
+    .container {
+        max-width: 95%;
+    }
+}
+
+.messagebox {
+    display: inline-block;
+    background-color: rgb(231, 230, 210);
+    border: rgb(151, 151, 151) 3px solid;
+    color: rgb(135, 170, 173);
+    border-radius: 5px;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+}
+
+.messagebox > .message {
+    font-size: 0.7rem;
+    padding: 0.5rem 1rem;
+}

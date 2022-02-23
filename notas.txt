@@ -1,0 +1,10 @@
+cliente y servidor = react y node en el mismo projecto:
+https://www.freecodecamp.org/news/how-to-create-a-react-app-with-a-node-backend-the-complete-guide/
+
+para el cliente:
+npm run build
+
+para el server:
+docker stop navegador
+docker build -t navegador:1.0 .
+docker run -p 6512:3001 --rm -v /mnt/Juegos:/mnt -d --name navegador navegador:1.0

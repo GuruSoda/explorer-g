@@ -1,0 +1,26 @@
+{
+  "name": "navegador",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node index.js",
+    "server": "ROOTDIR=/mnt DEBUG=navegador:* nodemon index.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "npm run build --prefix client"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "crc": "^4.1.0",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "morgan": "~1.9.1",
+    "socket.io": "^4.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12",
+    "concurrently": "^7.0.0"
+  }
+}

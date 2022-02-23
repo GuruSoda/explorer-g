@@ -1,0 +1,9 @@
+export const backgroundItem = '#E0E6D2';
+export const borderItem = rgb(167, 216, 18);
+export const blue = '#428bca';
+export const transparent = 'transparent';
+export const white = '#fff';
+export const black = '#000';
+export const backgroudSelected = '#AA2B2B';
+export const borderSelected = '#20232a';
+export const dark = '#1E1E1E';
