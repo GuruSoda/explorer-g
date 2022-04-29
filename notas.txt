@@ -6,5 +6,6 @@ npm run build
 
 para el server:
 docker stop navegador
-docker build -t navegador:1.0 .
-docker run -p 6512:3001 --rm -v /mnt/Juegos:/mnt -d --name navegador navegador:1.0
+docker build -t www.planetaguru.com.ar/navegador:1.1 .
+docker run -p 6512:3001 --rm -v /mnt/Juegos:/mnt -d --name navegador www.planetaguru.com.ar/navegador:1.1
+docker push www.planetaguru.com.ar/navegador:1.1

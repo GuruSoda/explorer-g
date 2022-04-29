@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node index.js",
+    "start": "ROOTDIR=/mnt node index.js",
     "server": "ROOTDIR=/mnt DEBUG=navegador:* nodemon index.js",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
@@ -16,6 +16,7 @@
     "crc": "^4.1.0",
     "debug": "~2.6.9",
     "express": "~4.16.1",
+    "express-fileupload": "^1.3.1",
     "morgan": "~1.9.1",
     "socket.io": "^4.2.0"
   },

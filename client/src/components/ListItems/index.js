@@ -2,10 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import ItemLine from 'components/ItemLine'
 import Toolbox from 'components/Toolbox'
 import MessageBox from 'components/MessageBox'
+import FileUpload from 'components/FileUpload'
 import { getList, getSearch } from 'services/navegadorService';
 import { PathContext } from 'contexts/pathContext'
 import { externalLink } from 'config/links'
 import 'index.css';
+import CreateDirectory from 'components/CreateDirectory';
+import { useKeycloak } from "@react-keycloak/web";
 
 function ListItems() {
   const [list, setList] = useState([]);
@@ -22,6 +25,7 @@ function ListItems() {
     });
   const initialRender = useRef(false);
   const [state, setState] = useState('')
+  const { keycloak, initialized } = useKeycloak();
 
   useEffect(() => {
     setListSearch(false)
@@ -207,16 +211,17 @@ function ListItems() {
 
   let itemsToShow = (filter) ? listFiltered : list
 
-//  console.log('Render!')
   return (
     <>
       <PathContext.Provider value={path}>
         <Toolbox onSearch={onSearch} filter={filter} onFilter={onFilter} clickorder={clickOrder} back={back} path={path} listItems={itemsToShow} order={order}/>
+        { keycloak.authenticated && <FileUpload directory={path}/> }
+        { keycloak.authenticated && <CreateDirectory /> }
         
         { itemsToShow
-        ? <ul>
+        ? <ul className="listdetailed">
             { pathHistory.length > 1 && itemsToShow && !listSearch && <li onClick={back} className="item back"><span className="material-icons">drive_file_move_rtl</span>..</li>}
-            { itemsToShow.map(item => <ItemLine callback={onClickItem} key={item.name} data={item} isSearch={listSearch}/>)}
+            { itemsToShow.map(item => <ItemLine callback={onClickItem} key={item.name} data={item} isSearch={listSearch} preview={false}/>)}
           </ul>
         : <MessageBox message={state}/>
         }

@@ -20,7 +20,7 @@ router.use(function (req, res, next) {
   } else if (navegador.isFile(req.url)) {
     res.sendFile(navegador.fullPath(req.url))
   } else {
-    res.json({error: 'file type not supported for download.'})
+    res.json({error: req.url + ' is a file type not supported for download.'})
   }
 })
 

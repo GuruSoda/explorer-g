@@ -1,25 +1,30 @@
 const EventEmitter = require('events')
 const fs = require('fs')
+const fsAsync = require('fs/promises')
 const path = require('path')
 const querystring = require('querystring')
 const crc = require('crc')
 const crypto = require('crypto');
+
 let base = '/'
 
 module.exports = {
     getDirBase: getDirBase,
     setDirBase: setDirBase,
     fullPath: fullPath,
+    mkdir: makeDirectory,
     isDirectory: isDirectory,
     isFile: isFile,
     exists: exists,
+    changeTimes: changeTimes,
     dirContent: dirContent,
-    sizeSubDirectory: sizeSubDirectory,
+    usage: usage,
     contentDirectory: contentDirectory,
     filesSubDirectories: filesSubDirectories,
     find: find,
     crc: getCRC,
-    hash: getHash
+    hash: getHash,
+    countDirFiles: countDirFiles
 }
 
 module.exports.mensaje = function () {
@@ -54,6 +59,16 @@ function isDirectory(pathReq) {
     } catch (e) {
 //        console.log(e)
         return false
+    }
+}
+
+async function changeTimes(pathFile, atime, mtime) {
+    const file = querystring.unescape(path.join(base, pathFile))
+
+    try {
+        await fsAsync.utimes(file, new Date(atime) || new Date(0), new Date(mtime) || new Date(0))
+    } catch (e) {
+        throw (e)
     }
 }
 
@@ -176,6 +191,16 @@ function fileStat(absolutePath) {
     return info
 }
 
+async function makeDirectory(newDirectory) {
+    const newPath = querystring.unescape(path.join(base, newDirectory))
+
+    try {
+        await fsAsync.mkdir(newPath);
+    } catch (err) {
+        throw err;
+    }
+}
+
 function find(baseDirectory, pattern) {
 
     return new Promise(function (resolve, reject) {
@@ -199,10 +224,8 @@ function find(baseDirectory, pattern) {
 }
 
 /*
-{
-    directories: false
-    files: true
-}
+Funcion que recorre a partir de un directorio "relativo" todos lo archivos y subdirectorios.
+En las opciones se puede especificar y debe ejecutar el callback al encontrar un directorio o archivo o ambos.
 */
 function filesSubDirectories (directory, cb, options = {directories:false,files:true}) {
     let dir = querystring.unescape(path.join(base, directory))
@@ -283,7 +306,16 @@ function contentDirectory (directory, cb, options) {
     return eventos
 }
 
-function sizeSubDirectory (directory, cb, ms) {
+
+/*
+Funcion que cuenta la cantidad de archivos, directorios y el total de bytes que ocupan los archivos.
+La sumatoria parcial y el lugar actual del recorrido es informado mediante el "cb" que se ejecuta cada "ms"
+La funcion retorna el resultado final de contar directorios, archivos y cantidad de bytes de todos los archivos.
+directory: Directorio "relativo" a partir de donde se cuentan los directorios y archivos.
+cb: Callback que se va a llamar cada "ms" de milisegundos
+ms: Milisegundos entre llamadas al "cb".
+*/
+async function usage (directory, cb, ms) {
         
     const dir = querystring.unescape(path.join(base, directory))
 
@@ -291,9 +323,9 @@ function sizeSubDirectory (directory, cb, ms) {
 
     let infoDirectory = {
         sum: {
-            totalFiles: 0,
-            totalBytes: 0,
-            totalDirectories: 0
+            files: 0,
+            bytes: 0,
+            directories: 0
         },
         current: {
             file: '',
@@ -305,10 +337,12 @@ function sizeSubDirectory (directory, cb, ms) {
 
         let inicio = new Date()
 
-        function counterSizeDirectory(dir) {
+        cb(infoDirectory)
+        
+        async function counterSizeDirectory(dir) {
 
             try {
-                const listado = fs.readdirSync(dir, {withFileTypes: true})
+                const listado = await fsAsync.readdir(dir, {withFileTypes: true})
 
                 for (const file of listado) {
                     let pathFile = path.join(dir, file.name)
@@ -324,41 +358,41 @@ function sizeSubDirectory (directory, cb, ms) {
                     }
 
                     if (file.isDirectory()) {
-                        infoDirectory.sum.totalDirectories++
+                        infoDirectory.sum.directories++
                         infoDirectory.current.directory = pathFile
-                        counterSizeDirectory(pathFile)
+                        await counterSizeDirectory(pathFile)
                     } else if (file.isFile()) {
                         const stat = fs.lstatSync(pathFile, {bigint: false, throwIfNoEntry: false})
-                        infoDirectory.sum.totalBytes += stat.size
-                        infoDirectory.sum.totalFiles++
+                        infoDirectory.sum.bytes += stat.size
+                        infoDirectory.sum.files++
                         infoDirectory.current.file = pathFile
                     }
                 }
             } catch (e) {
-                console.log('Error Procesando Directorio:', dir)
+                console.log('Error Procesando Directorio:', dir, '(' + e + ')')
             }
         }
 
-        counterSizeDirectory(dir)
+        await counterSizeDirectory(dir)
+
     } catch (e) {
     }
 
     return infoDirectory
 }
 
-// Esta funcion retorna una promesa:
+// Funcion qeu retorna el contenido de un directorio "relativo"
+// La funcion retorna una promesa:
 // resolve: vector de objetos donde cada posicion es un archivo o directorio del directorio a listar.
 // reject: error en la busqueda
 function dirContent (directory) {
         
     const dir = querystring.unescape(path.join(base, directory))
 
-    console.log('dir:', dir)
-
-    return new Promise(function (resolve, reject) {
+    return new Promise(async function (resolve, reject) {
         try {
             let contenido = []
-            const listado = fs.readdirSync(dir, {withFileTypes: true})
+            const listado = await fsAsync.readdir(dir, {withFileTypes: true})
 
             for (const file of listado) {
                 let pathArchivo = path.join(dir, file.name)
@@ -372,4 +406,32 @@ function dirContent (directory) {
             reject(e)
         }
     })
+}
+
+/*
+Esta funcion cuenta la cantidad de archivos y subdirectorios a partir de un directorio "relativo"
+retorna una promesa 
+*/
+function countDirFiles(directory) {
+
+     return new Promise(function (resolve, reject) {
+                let directories=0, files=0, size=0, errors=0
+
+                filesSubDirectories(directory, function(data) {
+
+                    try {
+                        const stat = fs.lstatSync(data, {bigint: false, throwIfNoEntry: false})
+
+                        if (stat.isFile()) {
+                            files++
+                            size += stat.size
+                        } else if (stat.isDirectory()) directories++
+
+                    } catch(err) {
+                        errors++
+                        console.log('En countDirFiles:', err)
+                    }
+                }, {files: true, directories: true})
+                resolve({directories, files, size, errors})
+        })
 }

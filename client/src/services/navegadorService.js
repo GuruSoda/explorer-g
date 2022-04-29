@@ -77,3 +77,61 @@ export const getHash = (path) =>
           return error.message
         }
   }) 
+
+export const postFile = (directory, file) => {
+
+  const formData = new FormData()
+  formData.append("file", file)
+  formData.append("date", file.lastModifiedDate)
+  formData.append("destination", directory)
+
+  return apiNavTools.post('/upload' + directory, formData)
+    .then(response => response.data)
+    .catch(function (error) {
+        if (error.response) {
+          // La respuesta fue hecha y el servidor respondió con un código de estado
+          // que esta fuera del rango de 2xx
+          return error.response.data
+    //      return error.response.status
+    //      return error.response.headers
+        } else if (error.request) {
+          // La petición fue hecha pero no se recibió respuesta
+          // `error.request` es una instancia de XMLHttpRequest en el navegador y una instancia de
+          // http.ClientRequest en node.js
+          return error.request
+        } else {
+          // Algo paso al preparar la petición que lanzo un Error
+          return error.message
+        }
+  }) 
+}
+
+export const mkdir = (directory, newDir) => {
+
+
+    const options = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: newDir })
+  }
+
+  return apiNavTools.post('/mkdir' + directory, options)
+    .then(response => response.data)
+    .catch(function (error) {
+        if (error.response) {
+          // La respuesta fue hecha y el servidor respondió con un código de estado
+          // que esta fuera del rango de 2xx
+          return error.response.data
+    //      return error.response.status
+    //      return error.response.headers
+        } else if (error.request) {
+          // La petición fue hecha pero no se recibió respuesta
+          // `error.request` es una instancia de XMLHttpRequest en el navegador y una instancia de
+          // http.ClientRequest en node.js
+          return error.request
+        } else {
+          // Algo paso al preparar la petición que lanzo un Error
+          return error.message
+        }
+  }) 
+}

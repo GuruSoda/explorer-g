@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useKeycloak } from "@react-keycloak/web";
 import directory_back from 'assets/bx-subdirectory-left.svg'
 import prettyBytes from 'pretty-bytes';
 import arrow_up from 'assets/angle-up-sm.svg'
@@ -8,6 +9,7 @@ function Toolbox(prop) {
 
     const [search, setSearch] = useState('')
     const [filter, setFilter] = useState('')
+    const { keycloak, initialized } = useKeycloak();
 
     let total_directories = 0, total_files = 0, total_bytes = 0
 
@@ -28,6 +30,15 @@ function Toolbox(prop) {
     function onFilter (e) {
         setFilter(e.target.value)
         prop.onFilter(e.target.value)
+    }
+
+    function onLogin (e) {
+        keycloak.login()
+    }
+
+    function onLogout (e) {
+        keycloak.logout()
+        console.table(keycloak.userInfo)
     }
 
     function onCancelFilter (e) {
@@ -57,6 +68,8 @@ function Toolbox(prop) {
         prop.onSearch('')
     }
 
+//    console.log('keycloak:', keycloak)
+
     return (
         <>
             <div className="toolbox">
@@ -71,6 +84,8 @@ function Toolbox(prop) {
                             <label htmlFor="textoBuscar">Quick Search:</label>
                             <input type="text" id="textFilter" value={prop.filter} onChange={onFiltering}></input>
                             <span onClick={onCancelFilter} className="material-icons">cancel</span>
+                            {!keycloak.authenticated && <span onClick={onLogin} className="material-icons">login</span> }
+                            {keycloak.authenticated && <span onClick={onLogout} className="material-icons">logout</span> }
                         </div>
                     </div>
                     <div className="infoInferior">
@@ -91,6 +106,8 @@ function Toolbox(prop) {
                             <li className={(prop.order.current === "name") ? "active" : ""} onClick={() => prop.clickorder('name')}>Name<div className="arrow"><img src={(prop.order.ascName) ? arrow_up : arrow_down} alt="nada"/></div></li>
                             <li className={(prop.order.current === "size") ? "active" : ""} onClick={() => prop.clickorder('size')}>Size<div className="arrow"><img src={(prop.order.ascSize) ? arrow_up : arrow_down} alt="nada"/></div></li>
                         </ul>
+                    </div>
+                    <div className="accion">
                     </div>
                 </div>
             </div>
