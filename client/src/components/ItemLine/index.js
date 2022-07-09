@@ -1,11 +1,14 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useKeycloak } from "@react-keycloak/web";
 import prettyBytes from 'pretty-bytes';
-import { getHash } from 'services/navegadorService';
+// import { getHash } from 'services/navegadorService';
+import { getHash, getRemoveFile } from 'services/fsService';
 import { PathContext } from 'contexts/pathContext';
-
+import  IndigoPlayer from 'indigo-player'
+import "indigo-player/lib/indigo-theme.css";
 
 const ext_images = ['jpg', 'jpeg', 'png', 'gif']
+const ext_videos = ['mp4', 'avi', 'ogg', 'WebM', 'mpeg', '3gp', 'quicktime']
 
 function ItemLine(prop) {
     const [bytes, setBytes] = useState(false)
@@ -14,17 +17,46 @@ function ItemLine(prop) {
     const [preview, setPreview] = useState(prop.preview || false)
     const [usage, setUsage] = useState({})
     const path = useContext(PathContext)
-    const { keycloak, initialized } = useKeycloak();
+    const { keycloak, initialized } = useKeycloak()
 
     const fecha = new Date(prop.data.modified)
+    useEffect(() => {
+
+        if (preview && inExtension(ext_videos)) {
+            const config = {
+                autoplay: true,
+                sources: [
+                  {
+                    type: 'mp4',
+                    src: (process.env.NODE_ENV === 'development' ? 'http://localhost:3001/' : window.location.href) + 'fs/view?file=' + (prop.isSearch ? prop.data.name : path + prop.data.name),
+                  }
+                ],
+              };
+
+            const element = document.getElementById('video');
+            const player = IndigoPlayer.init(element, config);
+
+            console.log('video:', config.sources[0])
+            console.log('element:', element)
+            console.log('player', player)
+        }
+    }, [preview])
 
     function click() {
         prop.callback(prop.data)
     }
 
+    function onClickRemove() {
+        const file = prop.isSearch ? prop.data.name : path + prop.data.name
+        getRemoveFile(file).then(function (res) {
+        }).catch(function (err) {
+        })
+    }
+
     function onClickUsageDir() {
         setWaitHash(true)
-        const eventSource = new EventSource((process.env.NODE_ENV === 'development' ? 'http://localhost:3001/' : window.location.href) + 'navtools/usagesse' + path + prop.data.name);
+//        const eventSource = new EventSource((process.env.NODE_ENV === 'development' ? 'http://localhost:3001/' : window.location.href) + 'navtools/usagesse' + path + prop.data.name)
+        const eventSource = new EventSource((process.env.NODE_ENV === 'development' ? 'http://localhost:3001/' : window.location.href) + 'fs/countsse?directory=' + path + prop.data.name)
         eventSource.addEventListener("Processing", progressUsage);
         eventSource.addEventListener("close", (event) => {
             eventSource.close();
@@ -57,7 +89,7 @@ function ItemLine(prop) {
             const file = prop.isSearch ? prop.data.name : path + prop.data.name
             getHash(file).then(function (res) {
                 setWaitHash(false)
-                setHash(res.hash ? res.hash : (res.err ? res.err : 'ERROR!'))
+                setHash(res)
             }).catch(function (err) {
                 setWaitHash(false)
                 setHash(err)
@@ -71,6 +103,15 @@ function ItemLine(prop) {
             
             return ext_images.find(img_ext => img_ext.toLowerCase() === ext.toLowerCase())
         } else 
+            return false
+    }
+
+    function inExtension(exts) {
+        if (prop.data.type === 'file') {
+            const ext = prop.data.name.split('.').pop()
+
+            return exts.find(img_ext => img_ext.toLowerCase() === ext.toLowerCase())
+        } else
             return false
     }
 
@@ -102,20 +143,28 @@ function ItemLine(prop) {
                 }
 
                 <div className="actions">
+                    { keycloak.authenticated && prop.data.type === 'file' && <span className="material-icons" onClick={onClickHash}>add</span> }
                     { keycloak.authenticated && prop.data.type === 'file' && <span className="material-icons" onClick={() => setPreview(!preview)}>play_circle_filled</span> }
                     { keycloak.authenticated && prop.data.type === 'directory' && <span className="material-icons" onClick={onClickUsageDir}>info</span>}
                     { keycloak.authenticated && prop.data.type === 'file' && <span className="material-icons" onClick={onClickHash}>fingerprint</span> }
-                    { prop.data.type === 'file' && <a href={(process.env.NODE_ENV === 'development' ? 'http://localhost:3001/' : window.location.href) + 'navtools/download' + (prop.isSearch ? prop.data.name : path + prop.data.name)} download={prop.data.name}><span className="material-icons">file_download</span></a>}
+                    { prop.data.type === 'file' && <a href={(process.env.NODE_ENV === 'development' ? 'http://localhost:3001/' : window.location.href) + 'fs/download?file=' + (prop.isSearch ? prop.data.name : path + prop.data.name)} download={prop.data.name}><span className="material-icons">file_download</span></a>}
                     { false && <span className="material-icons" onClick={onClickInfo}>edit</span> }
-                    { keycloak.authenticated && prop.data.type === 'file' && <span className="material-icons">delete_forever</span> }
+                    { keycloak.authenticated && prop.data.type === 'file' && <span className="material-icons" onClick={onClickRemove}>delete_forever</span> }
                     { false && prop.data.type === 'directory' && <span className="material-icons">image_aspect_ratio</span> }
                 </div>
             </div>
             { preview && isImage() && (
                 <div className="preview">
-                    { <img className="item-preview" src={(process.env.NODE_ENV === 'development' ? 'http://localhost:3001/' : window.location.href) + 'navtools/download' + (prop.isSearch ? prop.data.name : path + prop.data.name)}/> }
+                    { <img className="item-preview" src={(process.env.NODE_ENV === 'development' ? 'http://localhost:3001/' : window.location.href) + 'fs/view?file=' + (prop.isSearch ? prop.data.name : path + prop.data.name)}/> }
                 </div> ) 
             }
+
+            { preview && inExtension(ext_videos) && (
+                <div className="preview">
+                    <div id="video" className="item-preview" style={{width: '100%'}}></div>
+                </div> )
+            }
+
         </li>
     )
 }

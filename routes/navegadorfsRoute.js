@@ -1,14 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const navegador = require('../models/navegadorfsModel')
-/*
-const rootDir = process.env.ROOTDIR || '/'
+const config = require('../config')
 
-navegador.setDirBase(rootDir)
-*/
+navegador.setDirBase(config.rootdir)
+
 router.use(function (req, res, next) {
 
-  console.log(req.url)
+//  console.log(req.url)
 
   if (navegador.isDirectory(req.url)) {
       navegador.dirContent(req.url).then(function(data) {

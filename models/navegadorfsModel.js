@@ -16,6 +16,7 @@ module.exports = {
     isDirectory: isDirectory,
     isFile: isFile,
     exists: exists,
+    stat: fileStat,
     changeTimes: changeTimes,
     dirContent: dirContent,
     usage: usage,
@@ -66,7 +67,7 @@ async function changeTimes(pathFile, atime, mtime) {
     const file = querystring.unescape(path.join(base, pathFile))
 
     try {
-        await fsAsync.utimes(file, new Date(atime) || new Date(0), new Date(mtime) || new Date(0))
+        await fsAsync.utimes(file, new Date(atime || 0), new Date(mtime || 0 ))
     } catch (e) {
         throw (e)
     }
@@ -316,7 +317,7 @@ cb: Callback que se va a llamar cada "ms" de milisegundos
 ms: Milisegundos entre llamadas al "cb".
 */
 async function usage (directory, cb, ms) {
-        
+
     const dir = querystring.unescape(path.join(base, directory))
 
     if (!ms) ms = 750
@@ -381,7 +382,7 @@ async function usage (directory, cb, ms) {
     return infoDirectory
 }
 
-// Funcion qeu retorna el contenido de un directorio "relativo"
+// Funcion que retorna el contenido de un directorio "relativo"
 // La funcion retorna una promesa:
 // resolve: vector de objetos donde cada posicion es un archivo o directorio del directorio a listar.
 // reject: error en la busqueda
@@ -432,6 +433,7 @@ function countDirFiles(directory) {
                         console.log('En countDirFiles:', err)
                     }
                 }, {files: true, directories: true})
+
                 resolve({directories, files, size, errors})
         })
 }

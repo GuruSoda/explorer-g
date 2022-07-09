@@ -63,4 +63,5 @@ typings/
 client/build/
 
 client/node_modules/
+db.sqlite
 

@@ -37,7 +37,6 @@ router.get('/usagesse/*', async function (req, res) {
             }
 
             const resultado = await navegador.usage(directory, function(data) {
-//                console.log(data.current.file)
                 sentEvent(data)
             }, 750)
 

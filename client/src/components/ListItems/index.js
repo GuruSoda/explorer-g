@@ -3,7 +3,8 @@ import ItemLine from 'components/ItemLine'
 import Toolbox from 'components/Toolbox'
 import MessageBox from 'components/MessageBox'
 import FileUpload from 'components/FileUpload'
-import { getList, getSearch } from 'services/navegadorService';
+//import { getSearch } from 'services/navegadorService';
+import { getList, getSearch } from 'services/fsService';
 import { PathContext } from 'contexts/pathContext'
 import { externalLink } from 'config/links'
 import 'index.css';
@@ -185,9 +186,9 @@ function ListItems() {
       setPath(pathHistory.at(-1))
     } else if (info.type === 'file') {
       if (listSearch) {
-        window.open((process.env.NODE_ENV === 'development' ? 'http://localhost:3001/' : window.location.href) + 'navegador' + info.name, '_blank');
+        window.open((process.env.NODE_ENV === 'development' ? 'http://localhost:3001/' : window.location.href) + 'fs/view?file=' + info.name, '_blank');
       } else {
-        window.open((process.env.NODE_ENV === 'development' ? 'http://localhost:3001/' : window.location.href) + 'navegador' + path + info.name, '_blank');
+        window.open((process.env.NODE_ENV === 'development' ? 'http://localhost:3001/' : window.location.href) + 'fs/view?file=' + path + info.name, '_blank');
       }
     }
   }

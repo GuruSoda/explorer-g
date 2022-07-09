@@ -3,14 +3,14 @@ const path = require('path')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 const cors = require('cors')
-const navegador = require('./models/navegadorfsModel')
+const config = require('./config')
+const db = require('./db')
 
-const indexNavegador = require('./routes/navegadorfsRoute')
-const indexNavTools = require('./routes/navfstoolsRoute')
+db.connect(config.filedb)
+
+const routes = require('./network/routes')
 
 const app = express()
-
-navegador.setDirBase(process.env.ROOTDIR || '/mnt/share')
 
 app.use(cors())
 app.use(logger('dev'))
@@ -23,7 +23,6 @@ app.use(express.static(path.join(__dirname, 'client/build')))
 // Para el cliente en react
 // app.use(express.static(path.resolve(__dirname, '../client/build')))
 
-app.use('/navegador', indexNavegador)
-app.use('/navtools', indexNavTools)
+app.use(routes)
 
 module.exports = app

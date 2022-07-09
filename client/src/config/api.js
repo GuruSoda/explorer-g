@@ -11,3 +11,8 @@ export const apiNavTools = create({
     baseURL: './navtools',
     timeout: 600000,
 });
+
+export const apiFS = create({
+      baseURL: './fs',
+      timeout: 600000,
+});

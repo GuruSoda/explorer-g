@@ -85,7 +85,8 @@ export const postFile = (directory, file) => {
   formData.append("date", file.lastModifiedDate)
   formData.append("destination", directory)
 
-  return apiNavTools.post('/upload' + directory, formData)
+//  return apiNavTools.post('/upload' + directory, formData)
+  return apiNavTools.post('/upload', formData)
     .then(response => response.data)
     .catch(function (error) {
         if (error.response) {

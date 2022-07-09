@@ -18,7 +18,7 @@ function App() {
     <ReactKeycloakProvider authClient={keycloak} initOptions={initOptions}>
 
       {console.log('Location pathname:', window.location.pathname)}
-      {console.log('Location:', window.location) }      
+      {console.log('Location:', window.location) }
 
       <Router basename={window.location.pathname}>
         <div className="container">

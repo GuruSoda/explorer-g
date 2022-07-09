@@ -54,7 +54,7 @@ Texto Normal: #8892b0
 }
 
 html {
-    font-size: 16px;
+    font-size: 14px;
 }
 
 body {
@@ -146,6 +146,7 @@ body {
     justify-content: space-between;
     font-size: 0.85rem;
     margin-bottom: 0.15rem;
+    align-items: flex-end;
 }
 
 .toolbox > .info > .infoInferior > .search > .material-icons{
@@ -157,6 +158,7 @@ body {
     background-color: rgb(244, 247, 235);
     border: rgb(167, 216, 18) 1px solid;
     color: rgb(135, 170, 173);
+    height: 1.1rem;
 }
 
 .toolbox > .info > .infoInferior > .info_listing {
@@ -173,12 +175,14 @@ body {
 .toolbox > .info > .infoInferior > .order {
     display: flex;
     padding-right: 0.25rem;
-    align-items: flex-end;
     justify-content: flex-end;
+    flex-direction: row;
 }
 
 .toolbox > .info > .infoInferior > .order > li {
-    display: block;
+    display: flex;
+    justify-content: end;
+    flex-direction: row;
     font-size: 0.9rem;
     margin: 0rem 0rem 0rem 0.5rem;
     cursor: pointer;
@@ -195,8 +199,7 @@ body {
 
 .arrow {
     width: 0.9rem;
-    font-size: 0px;
-    float: right;
+    font-size: 1rem;
     margin: 0 0 0 0.5rem;
     padding-top: 1px;
 }
@@ -377,7 +380,7 @@ body {
 .item-preview {
     max-width: 100%;
     height: 90vh;
-}
+ }
 
 .absoluto {
     /* position: relative; */
