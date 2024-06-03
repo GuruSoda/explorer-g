@@ -1,7 +1,7 @@
 const dotenv = require('dotenv')
 
 function loadConfig() {
-    console.log('Cargando configuracion...')
+//    console.log('Cargando configuracion...')
     dotenv.config()
 
     return {

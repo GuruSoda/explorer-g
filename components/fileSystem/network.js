@@ -44,6 +44,16 @@ router.get('/verify', function (req, res){
         })
 })
 
+router.get('/info', function (req, res){
+    controller.info(req.query.file)
+        .then((message) => {
+            response.success(req, res, message, 200)
+        })
+        .catch(e => {
+            response.error(req, res, e, 500, e)
+        })
+})
+
 router.post('/mkdir', function (req, res){
     controller.mkdir(req.body.newdirectory)
         .then((message) => {

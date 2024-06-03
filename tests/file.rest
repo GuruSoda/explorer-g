@@ -1,0 +1,33 @@
+@hostname = localhost:3001
+// @file = /Chicas/torrents/varios/BF-606  NTR .mp4
+// @file = /Chicas/Paginas/iporntv.net/1.mp4
+@file = /Chicas/21620849.gif
+// @directory = /Chicas/Compilados/
+@directory = /Chicas/Paginas/iporntv.net
+
+###
+GET http://{{hostname}}/file/equalsByChecksum?directory={{directory}}
+
+###
+GET http://{{hostname}}/file/info?file={{file}}
+
+###
+GET http://{{hostname}}/fs/info?file={{file}}
+
+###
+GET http://{{hostname}}/fs/exists?file=/Chicas/Paginas/iporntv.net/1.mp4
+
+###
+GET http://{{hostname}}/file/count
+
+###
+GET http://{{hostname}}/fs/count?directory={{directory}}
+
+###
+GET http://{{hostname}}/file/directorysize?directory={{directory}}
+
+###
+GET http://{{hostname}}/file/countbyextension?directory={{directory}}
+
+###
+GET http://{{hostname}}/fs/find?directory={{directory}}&pattern=duke

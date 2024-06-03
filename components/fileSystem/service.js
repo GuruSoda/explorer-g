@@ -3,6 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const crypto = require('crypto')
 const makecrc = require('crc')
+const subdirectory = require('files-in-directory')
 
 function exists(path) {
     const stat = fs.lstatSync(path, {bigint: false, throwIfNoEntry: false})
@@ -62,7 +63,7 @@ function fileStat(absolutePath) {
 
 // Esta funciona recorreo a partir de un directorio todo su contenido incluido cada subdirectorio
 // Al callback solo le informa la ruta del archivo y/o directorio encontrado
-function navDirectory (directory, cb, options = {directories:false, files:true}) {
+function recursiveDirectorySync (directory, cb, options = {directories:false, files:true}) {
 
     options.directories = options.directories ? true : false
     options.files = options.files ? true : false
@@ -189,11 +190,11 @@ function hash(file, algorithm='md5') {
 
     return new Promise(function (resolve, reject) {
 
-        const readStream = fs.createReadStream(file, {highWaterMark: 64*1024, enconding: 'binary'});
-        const hash = crypto.createHash(algorithm);
+        const readStream = fs.createReadStream(file, {highWaterMark: 64*1024, enconding: 'binary'})
+        const hash = crypto.createHash(algorithm)
 
         readStream.on('data', (chunk) => {
-            hash.update(chunk);
+            hash.update(chunk)
         })
 
         readStream.on('end', () => {
@@ -201,7 +202,6 @@ function hash(file, algorithm='md5') {
         })
 
         readStream.on('error', (err) => {
-            console.log(err)
             reject(err)
         })
     })
@@ -213,25 +213,19 @@ function count(directory) {
 
             if (!exists(directory) || !isDirectory(directory)) reject('Directory not exists or not is a directory.')
 
-            let directories=0, files=0, size=0, errors=0
+            let files=0, size=0
 
-            navDirectory(directory, function(data) {
+            let it = subdirectory(directory)
 
-                try {
-                    const stat = fs.lstatSync(data, {bigint: false, throwIfNoEntry: true})
+            while (it.name) {
 
-                    if (stat.isFile()) {
-                        files++
-                        size += stat.size
-                    } else if (stat.isDirectory()) directories++
+                files++
+                size += it.stat().size
 
-                } catch(err) {
-                    errors++
-                    reject(err)
-                }
-            }, {files: true, directories: true})
+                it = it.next()
+            }
 
-            resolve({directories, files, size, errors})
+            resolve({files, size})
        })
 }
 
@@ -308,13 +302,16 @@ function find(directory, pattern) {
         let result = []
         const regpattern = new RegExp(pattern, 'i')
 
-        navDirectory (directory, function(fullPath) {
-            if (regpattern.test(fullPath)) {
-                let reg = fileStat(fullPath)
-                reg.name = fullPath
-                result.push(reg)
+        let it = subdirectory(directory)
+
+        while (it.name) {
+
+            if (regpattern.test(it.path)) {                
+                result.push({path: it.path, size: it.stat().size, date: it.stat().mtime})
             }
-        }, {directories:false,files:true})
+
+            it = it.next()
+        }
 
         resolve(result)
     })
@@ -347,6 +344,7 @@ function changeTimes(pathFile, mtime, atime) {
 
 module.exports = {
     list,
+    recursiveDirectorySync,
     existsEntry,
     existsFile,
     subDirContent,
@@ -359,5 +357,5 @@ module.exports = {
     find,
     move,
     changeTimes,
-    fileInfo: fileStat
+    fileInfo: fileStat,
 }

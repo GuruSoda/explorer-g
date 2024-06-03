@@ -1,17 +1,5 @@
 const db = require('../../db').getdb()
 
-const file = '\
-create table if not exists file ( \
-    id integer not null primary key autoincrement, \
-    file text not null, \
-    bytes integer not null, \
-    date integer not null, \
-    checksum text, \
-    description text, \
-    UNIQUE (file), \
-    UNIQUE(file, bytes, date) \
-)'
-
 const stmtCreate = "\
 create table if not exists entry ( \
     id integer not null primary key autoincrement, \
@@ -32,7 +20,7 @@ create table if not exists directory ( \
 
 function ejecutar() {
      return new Promise((resolve, reject) => {
-             db.run(file, (e) => {
+             db.run(stmtCreate, (e) => {
                  if (e) {
                      reject(e)
                  } else {
@@ -42,7 +30,8 @@ function ejecutar() {
      })
 }
 
-ejecutar()
+// ejecutar()
+(async () => await ejecutar())()
 
 // async function ejecutar() {
 //     return new Promise((resolve, reject) => {

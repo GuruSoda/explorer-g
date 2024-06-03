@@ -115,6 +115,15 @@ function ItemLine(prop) {
             return false
     }
 
+    function nameTooltip(e) {
+        if (isImage()) {
+//        console.log(e.target.children)
+
+//        console.log(e.target.innerText)
+        e.target.children.item(0).classList.toggle('show')
+        }
+    }
+
     return (
         <li>
             <div className={"item " + (preview && isImage() ? "sin-margin" : "")}>
@@ -133,7 +142,11 @@ function ItemLine(prop) {
                 { prop.data.type === 'file' && 
                     <>
                         <span className="material-icons">insert_drive_file</span>
-                        <div className="name" onClick={click} >{prop.data.name}</div>
+                        <div className="name" onClick={click} onMouseEnter={nameTooltip} onMouseLeave={nameTooltip}>{prop.data.name}
+                            <span className="tooltip">
+                                { <img className="preview-image" src={(process.env.NODE_ENV === 'development' ? 'http://localhost:3001/' : window.location.href) + 'fs/view?file=' + (prop.isSearch ? prop.data.name : path + prop.data.name)}/> }
+                            </span>
+                        </div>
                         { waitHash && <div className="waiting"></div> }
                         { hash && <div className="infofile">{hash}</div> }
                         <div className="size" onClick={onClickSize}>{ bytes ? prop.data.size : prettyBytes(prop.data.size)}</div>
@@ -143,7 +156,7 @@ function ItemLine(prop) {
                 }
 
                 <div className="actions">
-                    { keycloak.authenticated && prop.data.type === 'file' && <span className="material-icons" onClick={onClickHash}>add</span> }
+                    { keycloak.authenticated && prop.data.type === 'file' && <span className="material-icons" onClick={onClickHash}>playlist_add</span> }
                     { keycloak.authenticated && prop.data.type === 'file' && <span className="material-icons" onClick={() => setPreview(!preview)}>play_circle_filled</span> }
                     { keycloak.authenticated && prop.data.type === 'directory' && <span className="material-icons" onClick={onClickUsageDir}>info</span>}
                     { keycloak.authenticated && prop.data.type === 'file' && <span className="material-icons" onClick={onClickHash}>fingerprint</span> }

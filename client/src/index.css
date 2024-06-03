@@ -209,6 +209,7 @@ body {
 }
 
 .item {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -242,6 +243,36 @@ body {
     overflow: hidden;
     margin-right: 0.5rem;
     font-size: 1rem;
+}
+
+.tooltip {
+    visibility: hidden;
+
+    position: absolute;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    z-index: 2;
+    width: 20rem;
+    /* height: 5rem; */
+    top: 2.2rem;
+    left: 3rem;
+    padding: 0.5rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preview-image {
+    background-color: rgb(224, 230, 210);
+    max-width: 100%;
+    border-radius: 5px;
+}
+
+.show {
+    visibility: visible;
 }
 
 .infofile {

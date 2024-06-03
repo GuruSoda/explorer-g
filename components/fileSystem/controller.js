@@ -6,6 +6,10 @@ function absolutePath(directory) {
     return path.join(config.rootdir, directory)
 }
 
+function relativePath(directory) {
+    return directory.substr(config.rootdir.length)
+}
+
 function list(directory) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -22,7 +26,7 @@ function exists(file) {
     return new Promise(async (resolve, reject) => {
         if (!file) throw('Parameter file is required')
 
-        service.existsEntry(absolutePath(file)) ? resolve() : reject()
+        service.existsEntry(absolutePath(file)) ? resolve(true) : reject('Not Exists')
     })
 }
 
@@ -42,6 +46,27 @@ function verify(file, size, date) {
             if ((new Date(parseInt(date, 10))).toString() !== fileInfo.modified.toString()) reject('Diferents Dates: ' + (new Date(parseInt(date, 10))).toString() + ' <> ' + fileInfo.modified.toString())
 
         resolve('ok')
+    })
+}
+
+function info(file) {
+    return new Promise((resolve, reject) => {
+        if (!file) throw('Parameter file is required')
+
+        let salida = service.fileInfo(absolutePath(file))
+
+        if (!salida.error) {
+            salida.file = file
+            delete salida.name
+            salida.date = salida.modified
+
+            delete salida.modified
+            delete salida.access
+            delete salida.change
+
+            resolve(salida)
+        }
+        else reject(salida.error)
     })
 }
 
@@ -82,6 +107,7 @@ function hash(file, algo='md5') {
 
             resolve(result)
         } catch(message) {
+            console.log('Error en hash')
             reject(message)
         }
     })
@@ -144,8 +170,8 @@ function find(directory, pattern) {
             const result = await service.find(absolutePath(directory), pattern)
 
             const resfiltered = result.map(item => {
-                item.name = item.name.substr(config.rootdir.length)
-                return item
+                 item.path = relativePath(item.path)
+                 return item
             })
 
             resolve(resfiltered)
@@ -189,6 +215,7 @@ module.exports = {
     list,
     exists,
     verify,
+    info,
     mkdir,
     rm,
     hash,

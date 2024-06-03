@@ -29,7 +29,6 @@ function getdb() {
 function close() {
      db.close(function (err) {
         if (err) return console.log('[close]:', err)
-        else console.log('[close]:', 'Closed!')
     })
 }
 
