@@ -1,0 +1,14 @@
+{
+  "name": "migracion",
+  "version": "1.0.0",
+  "description": "Para migrar desde una base vieja a una nueva",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^11.1.2"
+  }
+}
